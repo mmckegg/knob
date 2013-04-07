@@ -1,0 +1,33 @@
+{
+  "name": "knob",
+  "version": "0.0.0",
+  "description": "Canvas based knob widget for the browser",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "example": "cd example && browservefy entry.js -- -d"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mmckegg/knob.git"
+  },
+  "keywords": [
+    "knob",
+    "dial",
+    "canvas",
+    "touch"
+  ],
+  "author": "Matt McKegg",
+  "license": "MIT",
+  "dependencies": {
+    "hyperscript": "~1.1.0",
+    "xtend": "~2.0.3",
+    "ever": "0.0.3"
+  },
+  "devDependencies": {
+    "browservefy": "*"
+  }
+}
