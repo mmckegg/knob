@@ -107,7 +107,7 @@ module.exports = function(options){
       context2d.clearRect(0, 0, canvas.width, canvas.height)
       draw(context2d, options)
       input.value = options.value
-      requestAnimationFrame(refreshCanvas)
+      requestAnimationFrame.call(window, refreshCanvas)
     }
   }
 
