@@ -5,7 +5,7 @@ Canvas knob widget for the browser (touch compatible). Based on [jQuery Knob](ht
 
 ## Install
 
-```shell
+```bash
 $ npm install knob
 ```
 
@@ -29,7 +29,7 @@ document.getElementById('container').appendChild(knob)
 
 Run the included example:
 
-```shell
+```bash
 $ npm run example
 # then navigate to http://localhost:9966
 ```
