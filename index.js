@@ -24,7 +24,9 @@ module.exports = function(options){
     labelColor: '#888',
 
     angleOffset: 0, 
-    angleArc: 360
+    angleArc: 360,
+
+    className: null
 
   }, options)
 
@@ -67,7 +69,7 @@ module.exports = function(options){
     'right': 0
   }}, options.label)
 
-  var element = h('div', {
+  var element = h('div', { className: options.className,
     style: {'display': 'inline-block', 'position': 'relative', 'height': options.height + 'px', 'width': options.width + 'px'}
   }, canvas, input, label)
 

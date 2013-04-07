@@ -50,6 +50,7 @@ $ npm run example
 - labelColor (`'#888'`)
 - angleOffset (`0`)
 - angleArc (`360`)
+- className (`null`)
 
 
 ## License
