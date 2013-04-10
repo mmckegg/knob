@@ -26,7 +26,8 @@ module.exports = function(options){
     angleOffset: 0, 
     angleArc: 360,
 
-    className: null
+    className: null,
+    activeClass: null
 
   }, options)
 

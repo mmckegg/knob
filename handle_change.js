@@ -12,7 +12,10 @@ module.exports = function(knob){
       knob.setValue(xyToValue(knob.options, e.pageX, e.pageY, offset))
     }
 
+    knob.options.activeClass && knob.classList.add(knob.options.activeClass)
+
     documentEvents.on('mousemove', mouseMove).once('mouseup', function(){
+      knob.options.activeClass && knob.classList.remove(knob.options.activeClass)
       documentEvents.removeListener('mousemove', mouseMove)
     })
 
@@ -30,7 +33,10 @@ module.exports = function(knob){
       )
     }
 
+    knob.options.activeClass && knob.classList.add(knob.options.activeClass)
+
     documentEvents.on('touchmove', touchMove).once('touchend', function(){
+      knob.options.activeClass && knob.classList.remove(knob.options.activeClass)
       documentEvents.removeListener('touchmove', touchMove)
     })
 
