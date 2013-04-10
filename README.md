@@ -51,6 +51,7 @@ $ npm run example
 - angleOffset (`0`)
 - angleArc (`360`)
 - className (`null`)
+- activeClass (`null`)
 
 
 ## License
