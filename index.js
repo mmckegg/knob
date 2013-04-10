@@ -142,8 +142,8 @@ function draw(context2d, options){
 
   if (options.cursor){
     var cursorExt = (options.cursor / 100) || 1;
-    startAt = endAngle - cursorExt
-    endAt = endAngle + cursorExt
+    startAt = endAt - cursorExt
+    endAt = endAt + cursorExt
   }
 
   context2d.lineWidth = lineWidth
