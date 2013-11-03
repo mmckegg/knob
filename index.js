@@ -80,11 +80,15 @@ module.exports = function(options){
   var renderedValue = options.value
   var animating = false
 
-  element.setValue = function(value){
+  element.setValue = function(value, event){
     value = Math.min(options.max, Math.max(options.min, value))
     options.value = value
+    element.value = value
     if (!animating){
       refreshCanvas()
+    }
+    if (event === true && element.onchange){
+      element.onchange()
     }
   }
 

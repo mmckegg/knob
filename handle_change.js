@@ -9,15 +9,18 @@ module.exports = function(knob){
     var offset = getOffset(knob.canvas)
 
     function mouseMove(e) {
-      knob.setValue(xyToValue(knob.options, e.pageX, e.pageY, offset))
+      knob.setValue(xyToValue(knob.options, e.pageX, e.pageY, offset), true)
+    }
+
+    function mouseUp(e){
+      knob.options.activeClass && knob.classList.remove(knob.options.activeClass)
+      documentEvents.removeListener('mousemove', mouseMove)
+      documentEvents.removeListener('mouseup', mouseUp)
     }
 
     knob.options.activeClass && knob.classList.add(knob.options.activeClass)
 
-    documentEvents.on('mousemove', mouseMove).once('mouseup', function(){
-      knob.options.activeClass && knob.classList.remove(knob.options.activeClass)
-      documentEvents.removeListener('mousemove', mouseMove)
-    })
+    documentEvents.on('mousemove', mouseMove).on('mouseup', mouseUp)
 
     mouseMove(e)
 
@@ -29,16 +32,19 @@ module.exports = function(knob){
 
     function touchMove(e){
       knob.setValue(
-        xyToValue(knob.options, e.touches[touchIndex].pageX, e.touches[touchIndex].pageY, offset)
+        xyToValue(knob.options, e.touches[touchIndex].pageX, e.touches[touchIndex].pageY, offset), true
       )
+    }
+
+    function touchEnd(){
+      knob.options.activeClass && knob.classList.remove(knob.options.activeClass)
+      documentEvents.removeListener('touchmove', touchMove)
+      documentEvents.removeListener('touchend', touchEnd)
     }
 
     knob.options.activeClass && knob.classList.add(knob.options.activeClass)
 
-    documentEvents.on('touchmove', touchMove).once('touchend', function(){
-      knob.options.activeClass && knob.classList.remove(knob.options.activeClass)
-      documentEvents.removeListener('touchmove', touchMove)
-    })
+    documentEvents.on('touchmove', touchMove).on('touchend', touchEnd)
 
     touchMove(e)
   })
