@@ -43,10 +43,9 @@ module.exports = function(options){
 
   var input = h('input', {value: options.value, style: {
     'position' : 'absolute',
-    'top': (options.width / 2) - (options.width / 8),
-    'bottom': (options.width / 2) - (options.width / 8),
-    'left': getLineWidth(options),
-    'right': getLineWidth(options),
+    'top': (options.width / 2) - (options.width / 7) + 'px',
+    'left': getLineWidth(options) + 'px',
+    'width': options.width - (getLineWidth(options)*2) + 'px',
     'vertical-align' : 'middle',
     'border' : 0,
     'background' : 'none',
@@ -61,11 +60,10 @@ module.exports = function(options){
     'color': options.labelColor,
     'position': 'absolute',
     'bottom': 0,
-    'font-size': '60%',
-    'font-family': 'Arial',
+    'font-size': '80%',
     'text-align': 'center',
     'pointer-events': 'none',
-    'top': (options.width / 2) + (options.width / 8) - 3,
+    'top': (options.width / 2) + (options.width / 8) - 3 + 'px',
     'left': 0,
     'right': 0
   }}, options.label)
