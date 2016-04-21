@@ -42,7 +42,7 @@ module.exports = function(options){
 
   var fontScale = Math.max(String(Math.abs(options.max)).length, String(Math.abs(options.min)).length, 2) + 2
 
-  var input = h('input', {value: options.value, style: {
+  var inputOptions = {value: options.value, style: {
     'position' : 'absolute',
     'top': (options.width / 2) - (options.width / 7) + 'px',
     'left': getLineWidth(options) + 'px',
@@ -55,7 +55,13 @@ module.exports = function(options){
     'color' : options.fgColor,
     'padding' : '0px',
     '-webkit-appearance': 'none'
-  }})
+  }}
+
+  if(options.readOnly){
+    inputOptions['disabled'] = true
+  }
+
+  var input = h('input', inputOptions)
 
   var label = h('span', {style: {
     'color': options.labelColor,
