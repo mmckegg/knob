@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "example": "cd example && browservefy entry.js -- -d"
+    "example": "cd example && beefy entry.js -- -d"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,6 @@
     "ever": "0.0.3"
   },
   "devDependencies": {
-    "browservefy": "*"
+    "beefy": ">=2.1.6"
   }
 }

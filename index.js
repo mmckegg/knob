@@ -15,6 +15,7 @@ module.exports = function(options){
     cursor: false,
     thickness: 0.35,
     lineCap: 'butt',
+    readOnly: false,
 
     width: 200,
     height: options.width || 200,
@@ -23,7 +24,7 @@ module.exports = function(options){
     fgColor: '#87CEEB',
     labelColor: '#888',
 
-    angleOffset: 0, 
+    angleOffset: 0,
     angleArc: 360,
 
     className: null,
@@ -32,8 +33,8 @@ module.exports = function(options){
   }, options)
 
   var canvas = h('canvas', {
-    height: options.height, 
-    width: options.width, 
+    height: options.height,
+    width: options.width,
     style: {'position': 'absolute'}
   })
 
@@ -116,7 +117,9 @@ module.exports = function(options){
 
   draw(context2d, options)
 
-  handleChange(element)
+  if(!options.readOnly){
+    handleChange(element)
+  }
 
   return element
 }
@@ -141,7 +144,7 @@ function draw(context2d, options){
   var endAngle = 1.5 * Math.PI + angleOffset + angleArc;
 
   var startAt = startAngle
-  var endAt = startAt + angle  
+  var endAt = startAt + angle
 
   if (options.cursor){
     var cursorExt = (options.cursor / 100) || 1;
