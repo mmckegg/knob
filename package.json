@@ -28,6 +28,7 @@
     "ever": "0.0.3"
   },
   "devDependencies": {
-    "beefy": ">=2.1.6"
+    "beefy": ">=2.1.6",
+    "browserify": "^13.0.0"
   }
 }
