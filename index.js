@@ -16,6 +16,7 @@ module.exports = function(options){
     thickness: 0.35,
     lineCap: 'butt',
     readOnly: false,
+    displayInput: true,
 
     width: 200,
     height: options.width || 200,
@@ -61,7 +62,11 @@ module.exports = function(options){
     inputOptions['disabled'] = true
   }
 
-  var input = h('input', inputOptions)
+  if(options.displayInput === false){
+    inputOptions.style['display'] = 'none';
+  }
+
+  var input = h('input', inputOptions);
 
   var label = h('span', {style: {
     'color': options.labelColor,
