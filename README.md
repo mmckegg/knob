@@ -1,5 +1,4 @@
-Knob
-===
+# Knob
 
 Canvas knob widget for the browser (touch compatible). Based on [jQuery Knob](http://anthonyterrien.com/knob) by Anthony Terrien.
 
@@ -12,19 +11,19 @@ $ npm install knob
 ## Example
 
 ```js
-var Knob = require('knob') // browserify require
+var Knob = require("knob"); // browserify require
 
 var knob = Knob({
-  label: 'Test 123',
+  label: "Test 123",
   value: 100,
   angleOffset: -125,
   angleArc: 250,
   min: 0,
   max: 200,
-  width: 100
-})
+  width: 100,
+});
 
-document.getElementById('container').appendChild(knob)
+document.getElementById("container").appendChild(knob);
 ```
 
 Run the included example:
@@ -53,7 +52,6 @@ $ npm run example
 - className (`null`)
 - activeClass (`null`)
 - readOnly (`false`)
-
 
 ## License
 

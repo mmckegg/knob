@@ -2,13 +2,18 @@
   "name": "knob",
   "version": "1.1.0",
   "description": "Canvas based knob widget for the browser",
-  "main": "index.js",
   "directories": {
     "example": "example"
   },
+  "source": "src/Knob.ts",
+  "browser": "dist/Knob.js",
+  "module": "dist/Knob-esm.js",
+  "types": "dist/types.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "example": "cd example && beefy entry.js -- -d"
+    "example": "cd example && beefy entry.js -- -d",
+    "build": "parcel build",
+    "watch": "parcel watch"
   },
   "repository": {
     "type": "git",
@@ -22,13 +27,10 @@
   ],
   "author": "Matt McKegg",
   "license": "MIT",
-  "dependencies": {
-    "hyperscript": "~1.1.0",
-    "xtend": "~2.0.3",
-    "ever": "0.0.3"
-  },
   "devDependencies": {
-    "beefy": ">=2.1.6",
-    "browserify": "^13.0.0"
+    "@parcel/packager-ts": "^2.4.1",
+    "@parcel/transformer-typescript-types": "^2.4.1",
+    "parcel": "latest",
+    "typescript": "^4.6.3"
   }
 }
