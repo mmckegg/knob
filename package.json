@@ -11,9 +11,9 @@
   "types": "dist/types.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "example": "cd example && beefy entry.js -- -d",
     "build": "parcel build",
-    "watch": "parcel watch"
+    "prepare": "parcel build",
+    "example": "parcel src/example/index.html"
   },
   "repository": {
     "type": "git",

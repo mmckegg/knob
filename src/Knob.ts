@@ -1,5 +1,7 @@
 import { handleChange } from "./handleChange";
 
+const DEBOUNCE_DELAY = 16 // ms
+
 type CursorType = boolean | number
 
 const DefaultOptions = {
@@ -43,6 +45,7 @@ export class Knob {
   _div: HTMLDivElement
   _animating: boolean
   _renderedValue: number
+  _timeout: number
 
   constructor(knobOptions: Partial<KnobOptions>){
     const options = { ...DefaultOptions, ...knobOptions };
@@ -134,7 +137,7 @@ export class Knob {
     }
   }
 
-  node() {
+  get node() {
     return this._div
   }
 
@@ -149,7 +152,13 @@ export class Knob {
       this.refreshCanvas();
     }
     if (event === true && this.options.callback) {
-      this.options.callback(value);
+      /*
+       * Perform debounced callback
+       */
+      let timeout = this._timeout;
+      window.clearTimeout(timeout);
+      timeout = window.setTimeout(this.options.callback, DEBOUNCE_DELAY, value);
+      this._timeout = timeout;
     }
   }
 

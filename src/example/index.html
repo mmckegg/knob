@@ -2,13 +2,12 @@
 <head>
   <title>Knob Example</title>
 </head>
-<!-- <script type="module" src="../dist/Knob-esm.js"></script> -->
 <body>
 <div id="content"></div>
 </body>
 
 <script type="module">
-  import { Knob } from "../src/Knob"
+  import { Knob } from "../Knob"
   const el = document.getElementById("content")
   const knob1 = new Knob({
       label: 'Test 123',
@@ -20,28 +19,28 @@
       width: 100
   })
 
-  el.appendChild(knob1.node())
+  el.appendChild(knob1.node)
 
   el.appendChild(new Knob({
     label: 'readonly',
     value: 50,
     readOnly: true
-  }).node())
+  }).node)
 
   el.appendChild(new Knob({
     value: 26,
     fgColor: 'brown'
-  }).node())
+  }).node)
 
 const green_knob = new Knob({
     value: 180,
     fgColor: 'green',
     cursor: 30,
-    label: "Yay!",
-    callback: (value) => console.log(value)
+    label: "controls Test 123",
+    callback: (value) => knob1.setValue(value)
   })
 
-el.appendChild(green_knob.node())
+el.appendChild(green_knob.node)
 window.k = green_knob
 
 </script>

@@ -11,9 +11,9 @@ $ npm install knob
 ## Example
 
 ```js
-var Knob = require("knob"); // browserify require
+import { Knob } from "pure-knob"
 
-var knob = Knob({
+const knob = Knob({
   label: "Test 123",
   value: 100,
   angleOffset: -125,
@@ -21,16 +21,17 @@ var knob = Knob({
   min: 0,
   max: 200,
   width: 100,
+  callback: (val) => console.log(val)
 });
 
-document.getElementById("container").appendChild(knob);
+document.getElementById("container").appendChild(knob.node);
 ```
 
 Run the included example:
 
 ```bash
 $ npm run example
-# then navigate to http://localhost:9966
+# then navigate to http://localhost:xxxxx
 ```
 
 ## All Supported Options and Default Values
