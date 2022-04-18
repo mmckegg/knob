@@ -11,7 +11,7 @@ $ npm install knob
 ## Example
 
 ```js
-import { Knob } from "pure-knob"
+import { Knob } from "knob"
 
 const knob = Knob({
   label: "Test 123",
@@ -24,7 +24,7 @@ const knob = Knob({
   callback: (val) => console.log(val)
 });
 
-document.getElementById("container").appendChild(knob.node);
+document.getElementById("container").appendChild(knob.node());
 ```
 
 Run the included example:

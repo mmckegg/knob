@@ -137,7 +137,7 @@ export class Knob {
     }
   }
 
-  get node() {
+  node() {
     return this._div
   }
 
