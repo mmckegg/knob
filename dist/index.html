@@ -3,6 +3,7 @@
   <title>Knob Example</title>
 </head>
 <body>
+  <h1>Knob.js v1.1.0</h1>
 <div id="content"></div>
 </body>
 
@@ -150,13 +151,13 @@
       this[globalName] = mainExports;
     }
   }
-})({"iPwum":[function(require,module,exports) {
+})({"bsECb":[function(require,module,exports) {
 "use strict";
 var HMR_HOST = null;
 var HMR_PORT = null;
 var HMR_SECURE = false;
 var HMR_ENV_HASH = "d6ea1d42532a7575";
-module.bundle.HMR_BUNDLE_ID = "299cd6fa0793e165";
+module.bundle.HMR_BUNDLE_ID = "2e328ff02cd81354";
 function _toConsumableArray(arr) {
     return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
@@ -521,10 +522,10 @@ function hmrAcceptRun(bundle, id) {
     acceptedAssets[id] = true;
 }
 
-},{}],"141LR":[function(require,module,exports) {
-var _knobJs = require("../../dist/Knob.js");
+},{}],"lC6pW":[function(require,module,exports) {
+var _knob = require("../Knob");
 const el = document.getElementById("content");
-const knob1 = _knobJs.Knob({
+const knob1 = _knob.Knob({
     label: 'Test 123',
     value: 100,
     angleOffset: -125,
@@ -534,16 +535,16 @@ const knob1 = _knobJs.Knob({
     width: 100
 });
 el.appendChild(knob1);
-el.appendChild(new _knobJs.Knob({
+el.appendChild(_knob.Knob({
     label: 'readonly',
     value: 50,
     readOnly: true
 }));
-el.appendChild(new _knobJs.Knob({
+el.appendChild(_knob.Knob({
     value: 26,
     fgColor: 'brown'
 }));
-const green_knob = new _knobJs.Knob({
+const green_knob = _knob.Knob({
     value: 180,
     fgColor: 'green',
     cursor: 30,
@@ -553,44 +554,26 @@ const green_knob = new _knobJs.Knob({
 el.appendChild(green_knob);
 green_knob.onchange = ()=>{
     knob1.setValue(green_knob.value);
-    console.log(green_knob.value);
 };
-window.k = green_knob;
+window.green_knob = green_knob;
 
-},{"../../dist/Knob.js":"jXUlE"}],"jXUlE":[function(require,module,exports) {
-var e, t, n, a;
-function o(e1, t1, n1, a1) {
-    const o1 = 2 * Math.PI, i1 = e1.width / 2, s1 = e1.angleArc * Math.PI / 180, l1 = e1.angleOffset * Math.PI / 180;
-    let c1 = Math.atan2(t1 - (a1.x + i1), -(n1 - a1.y - i1)) - l1;
-    s1 !== o1 && c1 < 0 && c1 > -0.5 ? c1 = 0 : c1 < 0 && (c1 += o1);
-    const r = ~~(0.5 + c1 * (e1.max - e1.min) / s1) + e1.min;
-    return Math.max(Math.min(r, e1.max), e1.min);
-}
-function i(e2) {
-    const t2 = {
-        x: 0,
-        y: 0
-    };
-    for(; e2;)t2.x += e2.offsetLeft, t2.y += e2.offsetTop, e2 = e2.offsetParent;
-    return t2;
-}
-e = module.exports, t = "Knob", n = ()=>l
-, Object.defineProperty(e, t, {
-    get: n,
-    set: a,
-    enumerable: !0,
-    configurable: !0
-});
-const s = {
+},{"../Knob":"3dkdc"}],"3dkdc":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Knob", ()=>Knob
+);
+var _handleChange = require("./handleChange");
+const DEBOUNCE_DELAY = 10; // ms
+const DefaultOptions = {
     value: 50,
     min: 0,
     max: 100,
     step: 1,
-    cursor: !1,
+    cursor: false,
     thickness: 0.35,
     lineCap: "butt",
-    readOnly: !1,
-    displayInput: !0,
+    readOnly: false,
+    displayInput: true,
     width: 200,
     height: 200,
     bgColor: "#EEEEEE",
@@ -602,101 +585,224 @@ const s = {
     className: "",
     activeClass: ""
 };
-function l(e3) {
-    const t3 = {
-        ...s,
-        ...e3
-    }, n2 = document.createElement("canvas");
-    n2.height = t3.height, n2.width = t3.width, n2.style.position = "absolute";
-    const a2 = n2.getContext("2d"), l2 = Math.max(String(Math.abs(t3.max)).length, String(Math.abs(t3.min)).length, 2) + 2, r1 = document.createElement("input");
-    r1.value = String(t3.value), r1.disabled = t3.readOnly;
-    const u1 = t3.width / 2 * t3.thickness;
-    Object.assign(r1.style, {
+function Knob(knobOptions) {
+    const options = {
+        ...DefaultOptions,
+        ...knobOptions
+    };
+    // Create Canvas Element
+    const canvas = document.createElement("canvas");
+    canvas.height = options.height;
+    canvas.width = options.width;
+    canvas.style.position = "absolute";
+    const ctx = canvas.getContext("2d");
+    // Create Input Element
+    const fontScale = Math.max(String(Math.abs(options.max)).length, String(Math.abs(options.min)).length, 2) + 2;
+    const input = document.createElement("input");
+    input.value = String(options.value);
+    input.disabled = options.readOnly;
+    const lineWidth = options.width / 2 * options.thickness;
+    Object.assign(input.style, {
         position: "absolute",
-        top: t3.width / 2 - t3.width / 7 + "px",
-        left: `${u1}px`,
-        width: t3.width - 2 * u1 + "px",
+        top: `${options.width / 2 - options.width / 7}px`,
+        left: `${lineWidth}px`,
+        width: `${options.width - lineWidth * 2}px`,
         "vertical-align": "middle",
         border: 0,
         background: "none",
-        font: `bold ${t3.width / l2 >> 0}px Arial`,
+        font: `bold ${options.width / fontScale >> 0}px Arial`,
         "text-align": "center",
-        color: t3.fgColor,
+        color: options.fgColor,
         padding: "0px",
         "-webkit-appearance": "none",
-        display: t3.displayInput ? "" : "none"
+        display: !options.displayInput ? "none" : ""
     });
-    const h1 = document.createElement("span");
-    Object.assign(h1.style, {
-        color: t3.labelColor,
+    // Create Label Element
+    const label = document.createElement("span");
+    Object.assign(label.style, {
+        color: options.labelColor,
         position: "absolute",
         bottom: 0,
         "font-size": "80%",
         "text-align": "center",
         "pointer-events": "none",
-        top: t3.width / 2 + t3.width / 8 - 3 + "px",
+        top: `${options.width / 2 + options.width / 8 - 3}px`,
         left: 0,
         right: 0
-    }), h1.innerHTML = t3.label;
-    const d = document.createElement("div");
-    Object.assign(d.style, {
+    });
+    label.innerHTML = options.label;
+    // Create div element
+    const div = document.createElement("div");
+    Object.assign(div.style, {
         display: "inline-block",
         position: "relative",
-        height: `${t3.height}px`,
-        width: `${t3.width}px`
-    }), t3.className && d.classList.add(t3.className), d.appendChild(n2), d.appendChild(r1), d.appendChild(h1), Object.assign(d, {
-        options: t3,
-        canvas: n2,
-        input: r1,
-        label: h1
+        height: `${options.height}px`,
+        width: `${options.width}px`,
+        "touch-action": "none"
     });
-    let m, p = t3.value, g = !1;
-    function f() {
-        p === t3.value ? g = !1 : (g = !0, p = t3.value, a2.clearRect(0, 0, n2.width, n2.height), c(t3, a2), r1.value = String(t3.value), window.requestAnimationFrame(f));
-    }
-    return d.getValue = ()=>t3.value
-    , d.setValue = (e4, n3)=>{
-        if (e4 = Math.min(t3.max, Math.max(t3.min, e4)), t3.value = e4, d.value = e4, g || f(), !0 === n3 && d.onchange) {
-            let e5 = m;
-            window.clearTimeout(e5), e5 = window.setTimeout(d.onchange, 16), m = e5;
+    if (options.className) div.classList.add(options.className);
+    div.appendChild(canvas);
+    div.appendChild(input);
+    div.appendChild(label);
+    // Attach HTML Elements to the div element
+    Object.assign(div, {
+        options,
+        canvas,
+        input,
+        label
+    });
+    let renderedValue = options.value;
+    let animating = false;
+    let _timeout;
+    function refreshCanvas() {
+        if (renderedValue === options.value) animating = false;
+        else {
+            animating = true;
+            renderedValue = options.value;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            draw(options, ctx);
+            input.value = String(options.value);
+            window.requestAnimationFrame(refreshCanvas);
         }
-    }, r1.addEventListener("change", (e6)=>{
-        const t4 = e6.target;
-        d.setValue?.(+t4.value);
-    }), c(t3, a2), t3.readOnly || function(e7) {
-        const t5 = document.addEventListener, n4 = document.removeEventListener, a3 = e7.canvas, s2 = e7.options, l3 = s2.activeClass;
-        a3.onmousedown = function(c2) {
-            c2.preventDefault();
-            const r = i(a3);
-            function u(t6) {
-                e7.setValue(o(s2, t6.pageX, t6.pageY, r), !0);
-            }
-            l3 && e7.classList.add(l3), t5("mousemove", u), t5("mouseup", function t7(a) {
-                l3 && e7.classList.remove(l3), n4("mousemove", u), n4("mouseup", t7);
-            }), u(c2);
-        }, a3.ontouchstart = function(c3) {
-            c3.preventDefault();
-            const r = c3.touches.length - 1, u = i(a3);
-            function h(t8) {
-                e7.setValue(o(s2, t8.touches[r].pageX, t8.touches[r].pageY, u), !0);
-            }
-            l3 && e7.classList.add(l3), t5("touchmove", h), t5("touchend", function t9() {
-                l3 && e7.classList.remove(l3), n4("touchmove", h), n4("touchend", t9);
-            }), h(c3);
-        };
-    }(d), d;
-}
-function c(e8, t11) {
-    const n5 = e8.angleOffset * Math.PI / 180, a4 = e8.angleArc * Math.PI / 180, o2 = (e8.value - e8.min) * a4 / (e8.max - e8.min), i2 = e8.width / 2, s3 = i2 * e8.thickness, l4 = i2 - s3 / 2, c4 = 1.5 * Math.PI + n5, r = 1.5 * Math.PI + n5 + a4;
-    let u = c4, h = u + o2;
-    if (e8.cursor) {
-        const t10 = (!0 === e8.cursor ? e8.thickness : e8.cursor) / 100 || 1;
-        u = h - t10, h += t10;
     }
-    t11.lineWidth = s3, t11.lineCap = e8.lineCap, t11.beginPath(), t11.strokeStyle = e8.bgColor, t11.arc(i2, i2, l4, r, c4, !0), t11.stroke(), t11.beginPath(), t11.strokeStyle = e8.fgColor, t11.arc(i2, i2, l4, u, h, !1), t11.stroke();
+    // Attach methods to the div
+    div.getValue = ()=>options.value
+    ;
+    div.setValue = (value, event)=>{
+        value = Math.min(options.max, Math.max(options.min, value));
+        options.value = value;
+        div.value = value;
+        if (!animating) refreshCanvas();
+        if (event === true && div.onchange) {
+            /*
+       * Perform debounced callback
+       */ let timeout = _timeout;
+            window.clearTimeout(timeout);
+            timeout = window.setTimeout(div.onchange, DEBOUNCE_DELAY);
+            _timeout = timeout;
+        }
+    };
+    input.addEventListener("change", (e)=>{
+        const el = e.target;
+        div.setValue?.(+el.value);
+    });
+    draw(options, ctx);
+    if (!options.readOnly) _handleChange.handleChange(div);
+    return div;
+}
+function draw(options, ctx) {
+    // deg to rad
+    const angleOffset = options.angleOffset * Math.PI / 180;
+    const angleArc = options.angleArc * Math.PI / 180;
+    const angle = (options.value - options.min) * angleArc / (options.max - options.min);
+    const xy = options.width / 2;
+    const lineWidth = xy * options.thickness;
+    const radius = xy - lineWidth / 2;
+    const startAngle = 1.5 * Math.PI + angleOffset;
+    const endAngle = 1.5 * Math.PI + angleOffset + angleArc;
+    let startAt = startAngle;
+    let endAt = startAt + angle;
+    if (options.cursor) {
+        const cursorSize = options.cursor === true ? options.thickness : options.cursor;
+        const cursorExt = cursorSize / 100 || 1;
+        startAt = endAt - cursorExt;
+        endAt = endAt + cursorExt;
+    }
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = options.lineCap;
+    ctx.beginPath();
+    ctx.strokeStyle = options.bgColor;
+    ctx.arc(xy, xy, radius, endAngle, startAngle, true);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = options.fgColor;
+    ctx.arc(xy, xy, radius, startAt, endAt, false);
+    ctx.stroke();
 }
 
-},{}]},["iPwum","141LR"], "141LR", "parcelRequiref305")
+},{"./handleChange":"dzMf2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dzMf2":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "handleChange", ()=>handleChange
+);
+function handleChange(knob) {
+    const D_listen = document.addEventListener;
+    const D_mute = document.removeEventListener;
+    const canvas = knob.canvas;
+    const options = knob.options;
+    const activeClass = options.activeClass;
+    canvas.onpointerdown = function(e1) {
+        e1.preventDefault();
+        const offset = getOffset(canvas);
+        function pointerMove(e) {
+            knob.setValue(xyToValue(options, e.pageX, e.pageY, offset), true);
+        }
+        function pointerUp(e) {
+            if (activeClass) knob.classList.remove(activeClass);
+            D_mute("pointermove", pointerMove);
+            D_mute("pointerup", pointerUp);
+        }
+        if (activeClass) knob.classList.add(activeClass);
+        D_listen("pointermove", pointerMove);
+        D_listen("pointerup", pointerUp);
+        pointerMove(e1);
+    };
+}
+function xyToValue(options, x, y, offset) {
+    const PI2 = 2 * Math.PI;
+    const w2 = options.width / 2;
+    const angleArc = options.angleArc * Math.PI / 180;
+    const angleOffset = options.angleOffset * Math.PI / 180;
+    let angle = Math.atan2(x - (offset.x + w2), -(y - offset.y - w2)) - angleOffset;
+    if (angleArc !== PI2 && angle < 0 && angle > -0.5) angle = 0;
+    else if (angle < 0) angle += PI2;
+    const result = ~~(0.5 + angle * (options.max - options.min) / angleArc) + options.min;
+    return Math.max(Math.min(result, options.max), options.min);
+}
+function getOffset(el) {
+    const result = {
+        x: 0,
+        y: 0
+    };
+    while(el){
+        result.x += el.offsetLeft;
+        result.y += el.offsetTop;
+        el = el.offsetParent;
+    }
+    return result;
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || dest.hasOwnProperty(key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}]},["bsECb","lC6pW"], "lC6pW", "parcelRequiref305")
 
 </script>
 </html>

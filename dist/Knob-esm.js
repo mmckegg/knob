@@ -4,38 +4,21 @@ function $b0b357e1eb3008cd$export$1ba2cb844e41b315(knob) {
     const canvas = knob.canvas;
     const options = knob.options;
     const activeClass = options.activeClass;
-    canvas.onmousedown = function(e1) {
+    canvas.onpointerdown = function(e1) {
         e1.preventDefault();
         const offset = $b0b357e1eb3008cd$var$getOffset(canvas);
-        function mouseMove(e) {
+        function pointerMove(e) {
             knob.setValue($b0b357e1eb3008cd$var$xyToValue(options, e.pageX, e.pageY, offset), true);
         }
-        function mouseUp(e) {
+        function pointerUp(e) {
             if (activeClass) knob.classList.remove(activeClass);
-            D_mute("mousemove", mouseMove);
-            D_mute("mouseup", mouseUp);
+            D_mute("pointermove", pointerMove);
+            D_mute("pointerup", pointerUp);
         }
         if (activeClass) knob.classList.add(activeClass);
-        D_listen("mousemove", mouseMove);
-        D_listen("mouseup", mouseUp);
-        mouseMove(e1);
-    };
-    canvas.ontouchstart = function(e2) {
-        e2.preventDefault();
-        const touchIndex = e2.touches.length - 1;
-        const offset = $b0b357e1eb3008cd$var$getOffset(canvas);
-        function touchMove(e) {
-            knob.setValue($b0b357e1eb3008cd$var$xyToValue(options, e.touches[touchIndex].pageX, e.touches[touchIndex].pageY, offset), true);
-        }
-        function touchEnd() {
-            if (activeClass) knob.classList.remove(activeClass);
-            D_mute("touchmove", touchMove);
-            D_mute("touchend", touchEnd);
-        }
-        if (activeClass) knob.classList.add(activeClass);
-        D_listen("touchmove", touchMove);
-        D_listen("touchend", touchEnd);
-        touchMove(e2);
+        D_listen("pointermove", pointerMove);
+        D_listen("pointerup", pointerUp);
+        pointerMove(e1);
     };
 }
 function $b0b357e1eb3008cd$var$xyToValue(options, x, y, offset) {
@@ -63,7 +46,7 @@ function $b0b357e1eb3008cd$var$getOffset(el) {
 }
 
 
-const $1d7aa38aa6635e2a$var$DEBOUNCE_DELAY = 16; // ms
+const $1d7aa38aa6635e2a$var$DEBOUNCE_DELAY = 10; // ms
 const $1d7aa38aa6635e2a$var$DefaultOptions = {
     value: 50,
     min: 0,
@@ -137,7 +120,8 @@ function $1d7aa38aa6635e2a$export$2403d36fd4a1a72(knobOptions) {
         display: "inline-block",
         position: "relative",
         height: `${options.height}px`,
-        width: `${options.width}px`
+        width: `${options.width}px`,
+        "touch-action": "none"
     });
     if (options.className) div.classList.add(options.className);
     div.appendChild(canvas);

@@ -1,6 +1,6 @@
 import { handleChange } from "./handleChange";
 
-const DEBOUNCE_DELAY = 16; // ms
+const DEBOUNCE_DELAY = 10; // ms
 
 type CursorType = boolean | number;
 
@@ -32,9 +32,7 @@ const DefaultOptions = {
   activeClass: "",
 };
 
-export type KnobOptions = typeof DefaultOptions & {
-  callback?: (value: number) => void;
-};
+export type KnobOptions = typeof DefaultOptions
 
 type KnobProperties = {
   options: KnobOptions;
@@ -111,6 +109,7 @@ export function Knob(knobOptions: Partial<KnobOptions>): KnobElement {
     position: "relative",
     height: `${options.height}px`,
     width: `${options.width}px`,
+    "touch-action": "none",
   });
   if (options.className) {
     div.classList.add(options.className);
@@ -214,5 +213,3 @@ function draw(options: KnobOptions, ctx: CanvasRenderingContext2D) {
   ctx.arc(xy, xy, radius, startAt, endAt, false);
   ctx.stroke();
 }
-
-export default Knob

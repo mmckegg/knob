@@ -1,6 +1,6 @@
 # Knob
 
-Canvas knob widget for the browser (touch compatible). Based on [jQuery Knob](http://anthonyterrien.com/knob) by Anthony Terrien.
+Canvas knob widget for the browser (touch compatible) with zero runtime dependencies, in modern TypeScript using the new [Pointer Events](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events) API for simplicity. Based on [jQuery Knob](http://anthonyterrien.com/knob) by Anthony Terrien.
 
 ## Install
 
@@ -10,8 +10,8 @@ $ npm install knob
 
 ## Example
 
-```js
-import { Knob } from "knob"
+```ts
+import { Knob } from "knob"; // or Knob = require("Knob")
 
 const knob = Knob({
   label: "Test 123",
@@ -20,7 +20,7 @@ const knob = Knob({
   angleArc: 250,
   min: 0,
   max: 200,
-  width: 100
+  width: 100,
 });
 
 document.getElementById("container").appendChild(knob);
@@ -52,6 +52,46 @@ $ npm run example
 - className (`""`)
 - activeClass (`""`)
 - readOnly (`false`)
+
+## Types
+From [./dist/Knob.d.ts](./dist/Knob.d.ts)
+
+```ts
+type CursorType = boolean | number;
+declare const DefaultOptions: {
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  cursor: CursorType;
+  thickness: number;
+  lineCap: CanvasLineCap;
+  readOnly: boolean;
+  displayInput: boolean;
+  width: number;
+  height: number;
+  bgColor: string;
+  fgColor: string;
+  label: string;
+  labelColor: string;
+  angleOffset: number;
+  angleArc: number;
+  className: string;
+  activeClass: string;
+};
+export type KnobOptions = typeof DefaultOptions;
+type KnobProperties = {
+  options: KnobOptions;
+  canvas: HTMLCanvasElement;
+  input: HTMLInputElement;
+  label: HTMLSpanElement;
+  value: number;
+  getValue: () => number;
+  setValue: (value: number, event?: boolean) => void;
+};
+export type KnobElement = KnobProperties & HTMLDivElement;
+export function Knob(knobOptions: Partial<KnobOptions>): KnobElement;
+```
 
 ## License
 

@@ -20,9 +20,7 @@ declare const DefaultOptions: {
     className: string;
     activeClass: string;
 };
-export type KnobOptions = typeof DefaultOptions & {
-    callback?: (value: number) => void;
-};
+export type KnobOptions = typeof DefaultOptions;
 type KnobProperties = {
     options: KnobOptions;
     canvas: HTMLCanvasElement;
@@ -33,7 +31,6 @@ type KnobProperties = {
     setValue: (value: number, event?: boolean) => void;
 };
 export type KnobElement = KnobProperties & HTMLDivElement;
-export default function Knob(knobOptions: Partial<KnobOptions>): KnobElement;
-export default Knob;
+export function Knob(knobOptions: Partial<KnobOptions>): KnobElement;
 
-//# sourceMappingURL=types.d.ts.map
+//# sourceMappingURL=Knob.d.ts.map

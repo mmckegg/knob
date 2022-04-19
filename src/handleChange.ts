@@ -1,77 +1,46 @@
-import type { KnobElement,  KnobOptions } from "./Knob"
+import type { KnobElement, KnobOptions } from "./Knob";
 
 export function handleChange(knob: KnobElement) {
-  const D_listen = document.addEventListener
-  const D_mute = document.removeEventListener
-  const canvas = <HTMLCanvasElement>knob.canvas
-  const options = <KnobOptions>knob.options
+  const D_listen = document.addEventListener;
+  const D_mute = document.removeEventListener;
+  const canvas = <HTMLCanvasElement>knob.canvas;
+  const options = <KnobOptions>knob.options;
   const activeClass = options.activeClass;
 
-  canvas.onmousedown =  function (e: MouseEvent) {
+  canvas.onpointerdown = function (e: PointerEvent) {
     e.preventDefault();
     const offset = getOffset(canvas);
 
-    function mouseMove(e: MouseEvent) {
+    function pointerMove(e: PointerEvent) {
       knob.setValue(xyToValue(options, e.pageX, e.pageY, offset), true);
     }
 
-    function mouseUp(e: MouseEvent) {
+    function pointerUp(e: PointerEvent) {
       if (activeClass) {
         knob.classList.remove(activeClass);
       }
-      D_mute("mousemove", mouseMove);
-      D_mute("mouseup", mouseUp);
+      D_mute("pointermove", pointerMove);
+      D_mute("pointerup", pointerUp);
     }
 
     if (activeClass) {
       knob.classList.add(activeClass);
     }
 
-    D_listen("mousemove", mouseMove);
-    D_listen("mouseup", mouseUp);
+    D_listen("pointermove", pointerMove);
+    D_listen("pointerup", pointerUp);
 
-    mouseMove(e);
-  }
+    pointerMove(e);
+  };
+}
 
-  canvas.ontouchstart =  function (e: TouchEvent) {
-    e.preventDefault();
-
-    const touchIndex = e.touches.length - 1;
-    const offset = getOffset(canvas);
-
-    function touchMove(e: TouchEvent) {
-      knob.setValue(
-        xyToValue(
-          options,
-          e.touches[touchIndex].pageX,
-          e.touches[touchIndex].pageY,
-          offset
-        ),
-        true
-      );
-    }
-
-    function touchEnd() {
-      if (activeClass) {
-        knob.classList.remove(activeClass);
-      }
-      D_mute("touchmove", touchMove);
-      D_mute("touchend", touchEnd);
-    }
-
-    if (activeClass) {
-      knob.classList.add(activeClass);
-    }
-
-    D_listen("touchmove", touchMove);
-    D_listen("touchend", touchEnd);
-
-    touchMove(e);
-  }
-};
-
-type point2D = { x: number, y: number }
-function xyToValue(options: KnobOptions, x: number, y: number, offset: point2D) {
+type point2D = { x: number; y: number };
+function xyToValue(
+  options: KnobOptions,
+  x: number,
+  y: number,
+  offset: point2D
+) {
   const PI2 = 2 * Math.PI;
   const w2 = options.width / 2;
   const angleArc = (options.angleArc * Math.PI) / 180;
