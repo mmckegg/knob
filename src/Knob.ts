@@ -1,8 +1,8 @@
 import { handleChange } from "./handleChange";
 
-const DEBOUNCE_DELAY = 16 // ms
+const DEBOUNCE_DELAY = 16; // ms
 
-type CursorType = boolean | number
+type CursorType = boolean | number;
 
 const DefaultOptions = {
   value: 50,
@@ -33,189 +33,184 @@ const DefaultOptions = {
 };
 
 export type KnobOptions = typeof DefaultOptions & {
-  callback?: (value: number) => void
+  callback?: (value: number) => void;
 };
 
-export class Knob {
-  options: KnobOptions
-  _canvas: HTMLCanvasElement
-  _ctx: CanvasRenderingContext2D
-  _input: HTMLInputElement
-  _label: HTMLSpanElement
-  _div: HTMLDivElement
-  _animating: boolean
-  _renderedValue: number
-  _timeout: number
+type KnobProperties = {
+  options: KnobOptions;
+  canvas: HTMLCanvasElement;
+  input: HTMLInputElement;
+  label: HTMLSpanElement;
+  value: number;
+  getValue: () => number;
+  setValue: (value: number, event?: boolean) => void;
+}
 
-  constructor(knobOptions: Partial<KnobOptions>){
-    const options = { ...DefaultOptions, ...knobOptions };
-    this.options = options
+type ProtoKnob = Partial<KnobProperties> & HTMLDivElement
+export type KnobElement = KnobProperties & HTMLDivElement
 
-    // Create Canvas Element
-    const canvas = document.createElement("canvas");
-    this._canvas = canvas
-    canvas.height = options.height;
-    canvas.width = options.width;
-    canvas.style.position = "absolute";
-    this._ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
+export function Knob(knobOptions: Partial<KnobOptions>): KnobElement {
+  const options = { ...DefaultOptions, ...knobOptions };
 
-    // Create Input Element
-    const fontScale =
-      Math.max(
-        String(Math.abs(options.max)).length,
-        String(Math.abs(options.min)).length,
-        2
-      ) + 2;
+  // Create Canvas Element
+  const canvas = document.createElement("canvas");
+  canvas.height = options.height;
+  canvas.width = options.width;
+  canvas.style.position = "absolute";
+  const ctx = <CanvasRenderingContext2D>canvas.getContext("2d");
 
-    const input = document.createElement("input");
-    this._input = input
-    input.value = String(options.value);
-    input.disabled = options.readOnly;
-    input.addEventListener("change", (e) => {
-      const el = <HTMLInputElement>e.target
-      this.setValue(+el.value);
-    });
+  // Create Input Element
+  const fontScale =
+    Math.max(
+      String(Math.abs(options.max)).length,
+      String(Math.abs(options.min)).length,
+      2
+    ) + 2;
 
-    const lineWidth = (options.width / 2) * options.thickness
+  const input = document.createElement("input");
+  input.value = String(options.value);
+  input.disabled = options.readOnly;
 
-    Object.assign(input.style, {
-      position: "absolute",
-      top: `${options.width / 2 - options.width / 7}px`,
-      left: `${lineWidth}px`,
-      width: `${options.width - lineWidth * 2}px`,
-      "vertical-align": "middle",
-      border: 0,
-      background: "none",
-      font: `bold ${((options.width / fontScale) >> 0)}px Arial`,
-      "text-align": "center",
-      color: options.fgColor,
-      padding: "0px",
-      "-webkit-appearance": "none",
-      display: !options.displayInput ? "none" : "",
-    });
+  const lineWidth = (options.width / 2) * options.thickness;
 
-    // Create Label Element
-    const label = document.createElement("span");
-    this._label = label
-    Object.assign(label.style, {
-      color: options.labelColor,
-      position: "absolute",
-      bottom: 0,
-      "font-size": "80%",
-      "text-align": "center",
-      "pointer-events": "none",
-      top: `${options.width / 2 + options.width / 8 - 3}px`,
-      left: 0,
-      right: 0
-    })
-    label.innerHTML = options.label
+  Object.assign(input.style, {
+    position: "absolute",
+    top: `${options.width / 2 - options.width / 7}px`,
+    left: `${lineWidth}px`,
+    width: `${options.width - lineWidth * 2}px`,
+    "vertical-align": "middle",
+    border: 0,
+    background: "none",
+    font: `bold ${(options.width / fontScale) >> 0}px Arial`,
+    "text-align": "center",
+    color: options.fgColor,
+    padding: "0px",
+    "-webkit-appearance": "none",
+    display: !options.displayInput ? "none" : "",
+  });
 
-    // Create div element
-    const div = document.createElement("div")
-    this._div = div
-    Object.assign(div.style, {
-      display: "inline-block",
-      position: "relative",
-      height: `${options.height}px`,
-      width: `${options.width}px`,
-    })
-    if (options.className) {
-      div.classList.add(options.className)
-    }
+  // Create Label Element
+  const label = document.createElement("span");
+  Object.assign(label.style, {
+    color: options.labelColor,
+    position: "absolute",
+    bottom: 0,
+    "font-size": "80%",
+    "text-align": "center",
+    "pointer-events": "none",
+    top: `${options.width / 2 + options.width / 8 - 3}px`,
+    left: 0,
+    right: 0,
+  });
+  label.innerHTML = options.label;
 
-    div.appendChild(canvas);
-    div.appendChild(input);
-    div.appendChild(label);
+  // Create div element
+  const div: ProtoKnob = document.createElement("div");
+  Object.assign(div.style, {
+    display: "inline-block",
+    position: "relative",
+    height: `${options.height}px`,
+    width: `${options.width}px`,
+  });
+  if (options.className) {
+    div.classList.add(options.className);
+  }
 
-    this._renderedValue = options.value;
-    this._animating = false;
+  div.appendChild(canvas);
+  div.appendChild(input);
+  div.appendChild(label);
 
-    this.draw();
+  // Attach HTML Elements to the div element
+  Object.assign(div, { options, canvas, input, label });
 
-    if (!options.readOnly) {
-      handleChange(this);
+  let renderedValue = options.value;
+  let animating = false;
+  let _timeout: number
+
+  function refreshCanvas() {
+    if (renderedValue === options.value) {
+      animating = false;
+    } else {
+      animating = true;
+      renderedValue = options.value;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      draw(options, ctx);
+      input.value = String(options.value);
+      window.requestAnimationFrame(refreshCanvas);
     }
   }
 
-  node() {
-    return this._div
-  }
+  // Attach methods to the div
+  div.getValue = () => options.value;
 
-  getValue() {
-    return this.options.value
-  }
-
-  setValue(value: number, event?: boolean): void {
-    value = Math.min(this.options.max, Math.max(this.options.min, value));
-    this.options.value = value;
-    if (!this._animating) {
-      this.refreshCanvas();
+  div.setValue = (value: number, event?: boolean) => {
+    value = Math.min(options.max, Math.max(options.min, value));
+    options.value = value;
+    div.value = value;
+    if (!animating) {
+      refreshCanvas();
     }
-    if (event === true && this.options.callback) {
+    if (event === true && div.onchange) {
       /*
        * Perform debounced callback
        */
-      let timeout = this._timeout;
+      let timeout = _timeout;
       window.clearTimeout(timeout);
-      timeout = window.setTimeout(this.options.callback, DEBOUNCE_DELAY, value);
-      this._timeout = timeout;
+      timeout = window.setTimeout(div.onchange, DEBOUNCE_DELAY);
+      _timeout = timeout;
     }
+  };
+
+  input.addEventListener("change", (e) => {
+    const el = <HTMLInputElement>e.target;
+    div.setValue?.(+el.value);
+  });
+
+  draw(options, ctx);
+
+  if (!options.readOnly) {
+    handleChange(<KnobElement>div);
   }
 
-  refreshCanvas() {
-    if (this._renderedValue === this.options.value) {
-      this._animating = false;
-    } else {
-      this._animating = true;
-      this._renderedValue = this.options.value;
-      this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
-      this.draw();
-      this._input.value = String(this.options.value);
-      window.requestAnimationFrame(this.refreshCanvas.bind(this));
-    }
-  }
-
-  draw() {
-    const options = this.options
-    const ctx = this._ctx
-
-    // deg to rad
-    const angleOffset = (options.angleOffset * Math.PI) / 180;
-    const angleArc = (options.angleArc * Math.PI) / 180;
-
-    const angle =
-      ((options.value - options.min) * angleArc) / (options.max - options.min);
-
-    const xy = options.width / 2;
-    const lineWidth = xy * options.thickness;
-    const radius = xy - lineWidth / 2;
-
-    const startAngle = 1.5 * Math.PI + angleOffset;
-    var endAngle = 1.5 * Math.PI + angleOffset + angleArc;
-
-    let startAt = startAngle;
-    let endAt = startAt + angle;
-
-    if (options.cursor) {
-      const cursorSize = (options.cursor === true)? options.thickness : options.cursor
-      const cursorExt = cursorSize / 100 || 1;
-      startAt = endAt - cursorExt;
-      endAt = endAt + cursorExt;
-    }
-
-    ctx.lineWidth = lineWidth;
-    ctx.lineCap = options.lineCap;
-
-    ctx.beginPath();
-    ctx.strokeStyle = options.bgColor;
-    ctx.arc(xy, xy, radius, endAngle, startAngle, true);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.strokeStyle = options.fgColor;
-    ctx.arc(xy, xy, radius, startAt, endAt, false);
-    ctx.stroke();
-  }
+  return <KnobElement>div;
 }
 
+function draw(options: KnobOptions, ctx: CanvasRenderingContext2D) {
+  // deg to rad
+  const angleOffset = (options.angleOffset * Math.PI) / 180;
+  const angleArc = (options.angleArc * Math.PI) / 180;
 
+  const angle =
+    ((options.value - options.min) * angleArc) / (options.max - options.min);
+
+  const xy = options.width / 2;
+  const lineWidth = xy * options.thickness;
+  const radius = xy - lineWidth / 2;
+
+  const startAngle = 1.5 * Math.PI + angleOffset;
+  const endAngle = 1.5 * Math.PI + angleOffset + angleArc;
+
+  let startAt = startAngle;
+  let endAt = startAt + angle;
+
+  if (options.cursor) {
+    const cursorSize =
+      options.cursor === true ? options.thickness : options.cursor;
+    const cursorExt = cursorSize / 100 || 1;
+    startAt = endAt - cursorExt;
+    endAt = endAt + cursorExt;
+  }
+
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = options.lineCap;
+
+  ctx.beginPath();
+  ctx.strokeStyle = options.bgColor;
+  ctx.arc(xy, xy, radius, endAngle, startAngle, true);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.strokeStyle = options.fgColor;
+  ctx.arc(xy, xy, radius, startAt, endAt, false);
+  ctx.stroke();
+}
