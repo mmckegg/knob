@@ -214,3 +214,5 @@ function draw(options: KnobOptions, ctx: CanvasRenderingContext2D) {
   ctx.arc(xy, xy, radius, startAt, endAt, false);
   ctx.stroke();
 }
+
+export default Knob
