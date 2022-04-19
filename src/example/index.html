@@ -1,52 +1,55 @@
 <html>
-<head>
-  <title>Knob Example</title>
-</head>
-<body>
-  <h1>Knob.js v1.1.0</h1>
-<div id="content"></div>
-</body>
+  <head>
+    <title>Knob Example</title>
+  </head>
+  <body>
+    <h1>Knob.js v1.1.0</h1>
+    <div id="content"></div>
+  </body>
 
-<script type="module">
-  import { Knob } from "../Knob"
-  const el = document.getElementById("content")
-  const knob1 = Knob({
-      label: 'Test 123',
+  <script type="module">
+    import { Knob } from "../Knob"
+    const el = document.getElementById("content")
+    const knob1 = Knob({
+      label: "Test 123",
       value: 100,
       angleOffset: -125,
       angleArc: 250,
       min: 0,
       max: 200,
-      width: 100
-  })
+      width: 100,
+    })
 
-  el.appendChild(knob1)
+    el.appendChild(knob1)
 
-  el.appendChild(Knob({
-    label: 'readonly',
-    value: 50,
-    readOnly: true
-  }))
+    el.appendChild(
+      Knob({
+        label: "readonly",
+        value: 50,
+        readOnly: true,
+      })
+    )
 
-  el.appendChild(Knob({
-    value: 26,
-    fgColor: 'brown'
-  }))
+    el.appendChild(
+      Knob({
+        value: 26,
+        fgColor: "brown",
+      })
+    )
 
-const green_knob = Knob({
-    value: 180,
-    fgColor: 'green',
-    cursor: 30,
-    label: "controls Test 123",
-    activeClass: "Hello!!!",
-  })
+    const green_knob = Knob({
+      value: 180,
+      fgColor: "green",
+      cursor: 30,
+      label: "controls Test 123",
+      activeClass: "Hello!!!",
+    })
 
-el.appendChild(green_knob)
-green_knob.onchange = () => {
-  knob1.setValue(green_knob.value)
-}
+    el.appendChild(green_knob)
+    green_knob.onchange = () => {
+      knob1.setValue(green_knob.value)
+    }
 
-window.green_knob = green_knob
-
-</script>
+    window.green_knob = green_knob
+  </script>
 </html>

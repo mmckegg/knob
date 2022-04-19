@@ -16,7 +16,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "prettier -w **.*; parcel build",
+    "build": "npm run format; parcel build",
+    "format": "prettier -w src/**/*.ts src/**/*.html",
     "prepare": "parcel build",
     "example": "parcel serve --port=9966 src/example/index.html"
   },

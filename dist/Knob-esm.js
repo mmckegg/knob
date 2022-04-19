@@ -46,7 +46,8 @@ function $b0b357e1eb3008cd$var$getOffset(el) {
 }
 
 
-const $1d7aa38aa6635e2a$var$DEBOUNCE_DELAY = 10; // ms
+const $1d7aa38aa6635e2a$var$DEBOUNCE_DELAY = 10 // ms
+;
 const $1d7aa38aa6635e2a$var$DefaultOptions = {
     value: 50,
     min: 0,
