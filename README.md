@@ -11,7 +11,7 @@ $ npm install knob
 ## Example
 
 ```ts
-import { Knob } from "knob" // or Knob = require("Knob")
+import { Knob } from "knob" // or Knob = require("knob")
 
 const knob = Knob({
   label: "Test 123",
