@@ -104,6 +104,8 @@ _Don't directly edit files in [./dist](./dist) directory._ Edit the source files
 
 3. To rebuild the dist folder from source, do `npm run build`. We use [Parcel](https://parceljs.org) for bundling, and the build process auto-formats your code with [Prettier](https://prettier.io).
 
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+
 ## License
 
 MIT
