@@ -20,18 +20,17 @@ const knob = Knob({
   angleArc: 250,
   min: 0,
   max: 200,
-  width: 100,
-  callback: (val) => console.log(val)
+  width: 100
 });
 
-document.getElementById("container").appendChild(knob.node());
+document.getElementById("container").appendChild(knob);
 ```
 
 Run the included example:
 
 ```bash
 $ npm run example
-# then navigate to http://localhost:xxxxx
+# then navigate to http://localhost:9966
 ```
 
 ## All Supported Options and Default Values
@@ -50,8 +49,8 @@ $ npm run example
 - labelColor (`'#888'`)
 - angleOffset (`0`)
 - angleArc (`360`)
-- className (`null`)
-- activeClass (`null`)
+- className (`""`)
+- activeClass (`""`)
 - readOnly (`false`)
 
 ## License
